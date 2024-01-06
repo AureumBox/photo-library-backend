@@ -1,12 +1,12 @@
-# Esto debe cambiar mucho pero shh
-
 # %%
+# Imports
 import os
 import numpy as np
 import keras
 from keras import layers
 from tensorflow import data as tf_data
 import matplotlib.pyplot as plt
+import tensorflow as tf
 
 # %%
 # Filter out corrupted images
@@ -100,27 +100,35 @@ train_ds = train_ds.prefetch(tf_data.AUTOTUNE)
 
 # %%
 # Modelo MobileNet
-import tensorflow as tf
+num_classes = 14
+class_names = [
+    "animals",
+    "architecture",
+    "battles",
+    "bookcovers",
+    "book_pages",
+    "foods",
+    "landscapes",
+    "maps",
+    "paintings",
+    "people",
+    "plants",
+    "rivers",
+    "sculptures",
+    "stamps",
+]
 
 mobilenet_model = tf.keras.applications.MobileNetV2(
     weights="imagenet", input_shape=(image_size[0], image_size[1], 3), include_top=False
 )
-
-
 mobilenet_model.trainable = False  # freezing
 
-
-num_classes = 14
-
 inputs = keras.Input(shape=(image_size[0], image_size[1], 3))
-
 x = mobilenet_model(inputs, training=False)
-
 x = keras.layers.GlobalAveragePooling2D()(x)
-
 outputs = keras.layers.Dense(num_classes)(x)
-model = keras.Model(inputs, outputs)
 
+model = keras.Model(inputs, outputs)
 
 # %%
 # Training
@@ -155,23 +163,6 @@ predictions = model.predict(img_array)
 predicted_class = np.argmax(predictions[0])  # Get the index of the highest score
 
 # Define your class names according to your categories
-class_names = [
-    "animals",
-    "architecture",
-    "battles",
-    "bookcovers",
-    "book_pages",
-    "foods",
-    "landscapes",
-    "maps",
-    "paintings",
-    "people",
-    "plants",
-    "rivers",
-    "sculptures",
-    "stamps",
-]
-
 print(
     f"This image is most likely {class_names[predicted_class]} with a {100 * np.max(predictions[0]):.2f}% confidence."
 )
