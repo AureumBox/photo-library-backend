@@ -2,11 +2,11 @@
 # Imports
 import os
 import numpy as np
-import keras
 from keras import layers
 from tensorflow import data as tf_data
 import matplotlib.pyplot as plt
 import tensorflow as tf
+
 
 # %%
 # Filter out corrupted images
@@ -48,7 +48,7 @@ print(f"Deleted {num_skipped} images.")
 image_size = (180, 180)
 batch_size = 20
 
-train_ds = keras.preprocessing.image_dataset_from_directory(
+train_ds = tf.keras.preprocessing.image_dataset_from_directory(
     "training_dataset",
     seed=1337,
     image_size=image_size,
@@ -123,12 +123,12 @@ mobilenet_model = tf.keras.applications.MobileNetV2(
 )
 mobilenet_model.trainable = False  # freezing
 
-inputs = keras.Input(shape=(image_size[0], image_size[1], 3))
+inputs = tf.keras.Input(shape=(image_size[0], image_size[1], 3))
 x = mobilenet_model(inputs, training=False)
-x = keras.layers.GlobalAveragePooling2D()(x)
-outputs = keras.layers.Dense(num_classes)(x)
+x = tf.keras.layers.GlobalAveragePooling2D()(x)
+outputs = tf.keras.layers.Dense(num_classes)(x)
 
-model = keras.Model(inputs, outputs)
+model = tf.keras.Model(inputs, outputs)
 
 # %%
 # Training
@@ -150,13 +150,13 @@ model = keras.models.load_model('models/classifier1.h5')
 
 # %%
 # Probar lmao
-img = keras.preprocessing.image.load_img(
+img = tf.keras.preprocessing.image.load_img(
     "C:\\Users\\aurim\Desktop\sitios-fantasticos-descubrir-bolivar-fc12c3d903a6a32f6a61daf37f8fa7cf.jpg",
     target_size=image_size,
 )
 plt.imshow(img)
 
-img_array = keras.preprocessing.image.img_to_array(img)
+img_array = tf.keras.preprocessing.image.img_to_array(img)
 img_array = tf.expand_dims(img_array, 0)  # Create batch axis
 
 predictions = model.predict(img_array)
@@ -166,3 +166,5 @@ predicted_class = np.argmax(predictions[0])  # Get the index of the highest scor
 print(
     f"This image is most likely {class_names[predicted_class]} with a {100 * np.max(predictions[0]):.2f}% confidence."
 )
+
+# %%
