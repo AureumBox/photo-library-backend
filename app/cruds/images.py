@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from app.models.images import Image as Model
+from app.models.images import ImageModel as Model
 from app.schemas import images as schemas
 
 

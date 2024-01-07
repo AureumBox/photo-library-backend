@@ -3,7 +3,7 @@ from sqlalchemy import Boolean, Column, Enum, String, UUID
 from app.config.database import Base
 
 
-class Image(Base):
+class ImageModel(Base):
     __tablename__ = "images"
 
     id = Column(UUID, primary_key=True, index=True)
