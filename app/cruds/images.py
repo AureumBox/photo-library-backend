@@ -9,7 +9,7 @@ def get_image(db: Session, id: str):
 
 
 def get_images(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(Model).offset(skip).limit(limit).all
+    return db.query(Model).offset(skip).limit(limit).all()
 
 
 def create_image(db: Session, image: schemas.ImageCreate):
