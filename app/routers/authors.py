@@ -21,7 +21,7 @@ def get_authors(db: SessionLocal = Depends(get_db)):
 
 @authors.delete(
     "/{id}",
-    description="Delete a author",
+    description="Delete an author",
 )
 def delete_author(id: str, db: SessionLocal = Depends(get_db)):
     service.delete_author(db, id)
@@ -30,7 +30,7 @@ def delete_author(id: str, db: SessionLocal = Depends(get_db)):
 
 @authors.post(
     "/",
-    description="Create a author",
+    description="Create an author",
 )
 def create_author(author: schemas.AuthorCreate, db: SessionLocal = Depends(get_db)):
     author = service.create_author(db, author)
