@@ -4,7 +4,6 @@ from fastapi.responses import JSONResponse
 import tensorflow as tf
 import numpy as np
 import io
-from PIL import Image
 from app.image_classifier.model_specifications import image_size, class_names
 
 from app.config.database import SessionLocal
