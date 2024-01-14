@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, File, UploadFile, Form
+from fastapi.responses import JSONResponse
 from app.config.database import SessionLocal
 from app.schemas import images as schemas
 from app.dependencies import get_db
-from app.cruds import images as service
+from app.services import images as service
 
 
 images = APIRouter(prefix="/images", tags=["images"])
@@ -18,9 +19,35 @@ def get_images(db: SessionLocal = Depends(get_db)):
 
 
 @images.post(
-    "/",
-    description="Upload an image",
+    "/classify",
+    description="Classify an image with the model",
 )
-def create_image(img: schemas.ImageCreate, db: SessionLocal = Depends(get_db)):
-    image = service.create_image(db, img)
-    return {"message": "lmao World", "image": image}
+def classify_image(file: UploadFile = File(...), db: SessionLocal = Depends(get_db)):
+    try:
+        return {"message": "lmao World", "image": "hola"}
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e)},
+        )
+
+
+@images.post("/", description="Upload an image")
+async def create_image(
+    file: UploadFile = File(...),
+    category: str = Form(...),
+    db: SessionLocal = Depends(get_db),
+):
+    try:
+        image = service.save_image(db, file, category)
+
+        return JSONResponse(
+            status_code=200,
+            content={"message": "Imagen guardada con éxito", "image": image},
+        )
+
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e)},
+        )
