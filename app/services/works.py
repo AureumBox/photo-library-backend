@@ -25,4 +25,5 @@ def create_work(db: Session, work: schemas.WorkCreate):
     return db_work
 
 def delete_work (db: Session, id: str):
-    db.query(Model).filter(Model.id == id).delete
+    db.query(Model).filter(Model.id == id).delete()
+    db.commit()

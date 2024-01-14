@@ -19,13 +19,6 @@ class ImageClassified():
     category: str | None = None
 
 
-# create in db
-"""
-class ImageCreate(ImageBase):
-    file: UploadFile
-"""
-
-
 # read/return
 class Image(ImageBase):
     pass
