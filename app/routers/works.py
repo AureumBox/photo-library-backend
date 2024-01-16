@@ -15,8 +15,14 @@ works = APIRouter(prefix="/works", tags=["works"])
     description="Get a list of all works",
 )
 def get_works(db: SessionLocal = Depends(get_db)):
-    works = service.get_works(db)
-    return {"message": "lmao World", "works": works}
+    try:
+        works = service.get_works(db)
+        return {"works": works}
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e)},
+        )
 
 
 @works.delete(
@@ -24,8 +30,14 @@ def get_works(db: SessionLocal = Depends(get_db)):
     description="Delete a work",
 )
 def delete_work(id: str, db: SessionLocal = Depends(get_db)):
-    service.delete_work(db, id)
-    return {"message": "Work deleted", "id": id}
+    try:
+        service.delete_work(db, id)
+        return {"message": "Work successfully deleted", "id": id}
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e)},
+        )
 
 
 @works.post(
@@ -33,5 +45,11 @@ def delete_work(id: str, db: SessionLocal = Depends(get_db)):
     description="Create a work",
 )
 def create_work(work: schemas.WorkCreate, db: SessionLocal = Depends(get_db)):
-    work = service.create_work(db, work)
-    return {"message": "lmao World", "work": work}
+    try:
+        work = service.create_work(db, work)
+        return {"message": "Work successfully created", "work": work}
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e)},
+        )   

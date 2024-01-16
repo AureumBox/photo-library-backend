@@ -26,4 +26,3 @@ def create_publication(db: Session, publication: schemas.PublicationCreate):
 def delete_publication (db: Session, id: str):
     db.query(Model).filter(Model.id == id).delete()
     db.commit()
- 

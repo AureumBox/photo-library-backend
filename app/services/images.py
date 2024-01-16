@@ -14,6 +14,11 @@ def get_image(db: Session, id: str):
     return db.query(Model).filter(Model.id == id).first()
 
 
+def get_images_by_tag(db: Session, tag: str):
+    print(tag)
+    return db.query(Model).filter(Model.tag == tag).all()
+
+
 def get_images(db: Session, skip: int = 0, limit: int = 100):
     return db.query(Model).offset(skip).limit(limit).all()
 

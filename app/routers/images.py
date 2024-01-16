@@ -33,6 +33,21 @@ def get_images(db: SessionLocal = Depends(get_db)):
         )
 
 
+@images.get(
+    "/tag/{tag}",
+    description="Get a list of all images from a tag",
+)
+def get_images(tag: str, db: SessionLocal = Depends(get_db)):
+    try:
+        images = service.get_images_by_tag(db, tag)
+        return {"images": images}
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e)},
+        )
+
+
 @images.post(
     "/classify",
     description="Classify an image with the model",
