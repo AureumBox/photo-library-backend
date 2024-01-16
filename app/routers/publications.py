@@ -15,8 +15,14 @@ publications = APIRouter(prefix="/publications", tags=["publications"])
     description="Get a list of all publications",
 )
 def get_publications(db: SessionLocal = Depends(get_db)):
-    publications = service.get_publications(db)
-    return {"message": "lmao World", "publications": publications}
+    try:
+        publications = service.get_publications(db)
+        return {"publications": publications}
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e)},
+        )
 
 
 @publications.delete(
@@ -24,14 +30,28 @@ def get_publications(db: SessionLocal = Depends(get_db)):
     description="Delete a publication",
 )
 def delete_publication(id: str, db: SessionLocal = Depends(get_db)):
-    service.delete_publication(db, id)
-    return {"message": "publication deleted", "id": id}
+    try:
+        service.delete_publication(db, id)
+        return {"message": "Publication successfully deleted", "id": id}
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e)},
+        )
 
 
 @publications.post(
     "/",
     description="Create a publication",
 )
-def create_publication(publication: schemas.PublicationCreate, db: SessionLocal = Depends(get_db)):
-    publication = service.create_publication(db, publication)
-    return {"message": "lmao World", "publication": publication}
+def create_publication(
+    publication: schemas.PublicationCreate, db: SessionLocal = Depends(get_db)
+):
+    try:
+        publication = service.create_publication(db, publication)
+        return {"message": "Publication successfully created", "publication": publication}
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e)},
+        )

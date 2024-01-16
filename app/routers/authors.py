@@ -15,8 +15,14 @@ authors = APIRouter(prefix="/authors", tags=["authors"])
     description="Get a list of all authors",
 )
 def get_authors(db: SessionLocal = Depends(get_db)):
-    authors = service.get_authors(db)
-    return {"message": "lmao World", "authors": authors}
+    try:
+        authors = service.get_authors(db)
+        return {"authors": authors}
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e)},
+        )
 
 
 @authors.delete(
@@ -24,8 +30,14 @@ def get_authors(db: SessionLocal = Depends(get_db)):
     description="Delete an author",
 )
 def delete_author(id: str, db: SessionLocal = Depends(get_db)):
-    service.delete_author(db, id)
-    return {"message": "author deleted", "id": id}
+    try:
+        service.delete_author(db, id)
+        return {"message": "Author successfully deleted", "id": id}
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e)},
+        )
 
 
 @authors.post(
@@ -33,5 +45,11 @@ def delete_author(id: str, db: SessionLocal = Depends(get_db)):
     description="Create an author",
 )
 def create_author(author: schemas.AuthorCreate, db: SessionLocal = Depends(get_db)):
-    author = service.create_author(db, author)
-    return {"message": "lmao World", "author": author}
+    try:
+        author = service.create_author(db, author)
+        return {"message": "Author successfully created", "author": author}
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e)},
+        )

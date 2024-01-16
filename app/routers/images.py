@@ -23,8 +23,14 @@ images = APIRouter(prefix="/images", tags=["images"])
     description="Get a list of all images",
 )
 def get_images(db: SessionLocal = Depends(get_db)):
-    images = service.get_images(db)
-    return JSONResponse(status_code=200, content={"images": images})
+    try:
+        images = service.get_images(db)
+        return {"images": images}
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e)},
+        )
 
 
 @images.post(
@@ -63,7 +69,7 @@ async def classify_image(
         return JSONResponse(
             status_code=200,
             content={
-                "message": "Imagen clasificada con éxito",
+                "message": "Image successfully classified",
                 "category": f"{class_names[predicted_class]}",
             },
         )
@@ -119,7 +125,7 @@ async def create_image(
             reference,
             file,
         )
-        return {"message": "Imagen guardada con éxito", "image": db_image}
+        return {"message": "Image successfully created", "image": db_image}
 
     except Exception as e:
         return JSONResponse(
