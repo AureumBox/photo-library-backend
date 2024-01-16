@@ -77,6 +77,7 @@ CREATE TABLE multimedia (
     work_id UUID,
     type TEXT NOT NULL,
     description TEXT NOT NULL,
+    tag TEXT NOT NULL,
     source TEXT NOT NULL,
     copyright TEXT NOT NULL,
     reference TEXT NOT NULL,

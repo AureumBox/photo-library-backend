@@ -1,13 +1,15 @@
-from sqlalchemy import Boolean, Column, Enum, String, UUID
-
+from sqlalchemy import Column, Text, UUID, Enum
 from app.config.database import Base
 
 
-class ImageModel(Base):
-    __tablename__ = "images"
+class Image(Base):
+    __tablename__ = "multimedia"
 
-    id = Column(UUID, primary_key=True, index=True)
-    category = Column(
+    id = Column(UUID(as_uuid=True), primary_key=True)
+    work_id = Column(UUID(as_uuid=True))
+    type = Column(Text)
+    description = Column(Text)
+    tag = Column(
         Enum(
             "animals",
             "architecture",
@@ -25,6 +27,9 @@ class ImageModel(Base):
             "stamps",
             name="img_category",
         ),
-        nullable=False,
     )
-    img = Column(String, nullable=False)
+    source = Column(Text)
+    copyright = Column(Text)
+    reference = Column(Text)
+    author_id = Column(UUID(as_uuid=True))
+    publication_id = Column(UUID(as_uuid=True))

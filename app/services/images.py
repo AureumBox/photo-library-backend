@@ -3,8 +3,10 @@ import shutil
 from pathlib import Path
 from fastapi import Form, UploadFile, File
 from sqlalchemy.orm import Session
+from enum import Enum
+from typing import Optional
 
-from app.models.images import ImageModel as Model
+from app.models.images import Image as Model
 from app.schemas import images as schemas
 
 
@@ -17,23 +19,61 @@ def get_images(db: Session, skip: int = 0, limit: int = 100):
 
 
 def create_image(db: Session, image: schemas.ImageCreate):
-    db_image = Model(id=image.id, category=image.category, img=image.img)
+    db_image = Model(**image.model_dump())
     db.add(db_image)
     db.commit()
     db.refresh(db_image)
     return db_image
 
 
-def save_image(db: Session, file: UploadFile = File(...), category: str = Form(...)):
-    print("hola")
-    id = uuid.uuid4()
-    image_path = f"app/images/{category}/{id}.jpg"
+class TagEnum(str, Enum):
+    animals = "animals"
+    architecture = "architecture"
+    battles = "battles"
+    bookcovers = "bookcovers"
+    book_pages = "book_pages"
+    foods = "foods"
+    landscapes = "landscapes"
+    maps = "maps"
+    paintings = "paintings"
+    people = "people"
+    plants = "plants"
+    rivers = "rivers"
+    sculptures = "sculptures"
+    stamps = "stamps"
+
+
+def save_image(
+    db: Session,
+    id: str,
+    work_id: str,
+    author_id: str,
+    publication_id: str,
+    type: str,
+    description: str,
+    tag: str,
+    copyright: str,
+    reference: str,
+    file: UploadFile = File(...),
+):
+    image_path = f"app/images/{tag}/{id}.jpg"
     with Path(image_path).open("wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    image = schemas.ImageCreate.model_construct(
-        id=id, category=category, img=image_path
-    )
-    create_image(db, image)
 
-    return {"id": str(id), "category": category, "img": image_path}
+    image = schemas.ImageCreate.model_construct(
+        id = id,
+        work_id = work_id,
+        author_id = author_id,
+        publication_id = publication_id,
+        type = type,
+        description = description,
+        tag = tag,
+        copyright = copyright,
+        reference = reference,
+        source = image_path,  
+    )
+
+    db_image = create_image(db, image)
+
+    return db_image
