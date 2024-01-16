@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, File, UploadFile, Form
 from uuid import UUID
 from typing import Optional
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 
 from enum import Enum
 import tensorflow as tf
@@ -46,6 +46,12 @@ def get_images(tag: str, db: SessionLocal = Depends(get_db)):
             status_code=500,
             content={"error": str(e)},
         )
+
+
+@images.get("/{id}/file", description="Get a image file by id")
+async def get_image_file(id: str, db: SessionLocal = Depends(get_db)):
+    image = service.get_image(db, id) 
+    return FileResponse(image.source)
 
 
 @images.post(
