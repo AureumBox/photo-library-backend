@@ -62,6 +62,7 @@ def save_image(
     file: UploadFile = File(...),
 ):
     image_path = f"app/images/{tag}/{id}.jpg"
+    Path(image_path).parent.mkdir(parents=True, exist_ok=True)
     with Path(image_path).open("wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
