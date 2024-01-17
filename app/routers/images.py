@@ -48,6 +48,21 @@ def get_images(tag: str, db: SessionLocal = Depends(get_db)):
         )
 
 
+@images.get(
+    "/{id}",
+    description="Get an image by id",
+)
+def get_image(id: str, db: SessionLocal = Depends(get_db)):
+    try:
+        image = service.get_image(db, id)
+        return {"image": image}
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e)},
+        )
+
+
 @images.get("/{id}/file", description="Get a image file by id")
 async def get_image_file(id: str, db: SessionLocal = Depends(get_db)):
     image = service.get_image(db, id) 
