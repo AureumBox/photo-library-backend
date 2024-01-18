@@ -1,49 +1,41 @@
-import uuid
 import shutil
 from pathlib import Path
 from fastapi import Form, UploadFile, File
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from enum import Enum
-from typing import Optional
 
 from app.models.images import Image as Model
-from app.models.works import Work
-from app.models.publications import Publication
-from app.models.authors import Author
-
 from app.schemas import images as schemas
 
 
 def get_image(db: Session, id: str):
-    return db.query(Model).filter(Model.id == id).first()
-
+    try:
+        return db.query(Model).filter(Model.id == id).first()
+    except Exception as e:
+        print (e)
+        return e
 
 
 def get_all_image_data(db: Session, id: str):
-    image = db.query(Model).filter(Model.id == id).first()
+    image = (
+        db.query(Model)
+        .options(
+            joinedload(Model.work),
+            joinedload(Model.publication),
+            joinedload(Model.author),
+        )
+        .filter(Model.id == id)
+        .first()
+    )
     if not image:
         return None
-    image_dict = image.__dict__
-    # Get the work, publication, and author details based on their IDs
-    work = (
-        db.query(Work).filter(Work.id == image.work_id).first()
-        if image.work_id
-        else None
-    )
-    publication = (
-        db.query(Publication).filter(Publication.id == image.publication_id).first()
-        if image.publication_id
-        else None
-    )
-    author = (
-        db.query(Author).filter(Author.id == image.author_id).first()
-        if image.author_id
-        else None
-    )
 
-    image_dict["work"] = work.__dict__ if work else None
-    image_dict["publication"] = publication.__dict__ if publication else None
-    image_dict["author"] = author.__dict__ if author else None
+    image_dict = image.__dict__
+    image_dict["work"] = image.work.__dict__ if image.work else None
+    image_dict["publication"] = (
+        image.publication.__dict__ if image.publication else None
+    )
+    image_dict["author"] = image.author.__dict__ if image.author else None
 
     image_dict.pop("work_id", None)
     image_dict.pop("publication_id", None)
