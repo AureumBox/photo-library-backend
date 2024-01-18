@@ -54,7 +54,7 @@ def get_images(tag: str, db: SessionLocal = Depends(get_db)):
 )
 def get_image(id: str, db: SessionLocal = Depends(get_db)):
     try:
-        image = service.get_image(db, id)
+        image = service.get_all_image_data(db, id)
         return {"image": image}
     except Exception as e:
         return JSONResponse(

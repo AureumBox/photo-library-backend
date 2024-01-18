@@ -14,15 +14,12 @@ from app.models.authors import Author
 from app.schemas import images as schemas
 
 
-def get_image2(db: Session, id: str):
-    image = db.query(Model).filter(Model.id == id).first()
-    work = db.query(Work).filter(Work.id == id).first()
-    publication = db.query(Publication).filter(Publication.id == id).first()
-    author = db.query(Author).filter(Author.id == id).first()
-    return image
-
-
 def get_image(db: Session, id: str):
+    return db.query(Model).filter(Model.id == id).first()
+
+
+
+def get_all_image_data(db: Session, id: str):
     image = db.query(Model).filter(Model.id == id).first()
     if not image:
         return None
@@ -107,7 +104,6 @@ def save_image(
     with Path(image_path).open("wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    source = f"/images/{id}/file"
     image = schemas.ImageCreate.model_construct(
         id=id,
         work_id=work_id,
