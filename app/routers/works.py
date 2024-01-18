@@ -11,7 +11,7 @@ works = APIRouter(prefix="/works", tags=["works"])
 
 
 @works.get(
-    "/",
+    "",
     description="Get a list of all works",
 )
 def get_works(db: SessionLocal = Depends(get_db)):
@@ -41,7 +41,7 @@ def delete_work(id: str, db: SessionLocal = Depends(get_db)):
 
 
 @works.post(
-    "/",
+    "",
     description="Create a work",
 )
 def create_work(work: schemas.WorkCreate, db: SessionLocal = Depends(get_db)):

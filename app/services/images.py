@@ -9,11 +9,7 @@ from app.schemas import images as schemas
 
 
 def get_image(db: Session, id: str):
-    try:
-        return db.query(Model).filter(Model.id == id).first()
-    except Exception as e:
-        print (e)
-        return e
+    return db.query(Model).filter(Model.id == id).first()
 
 
 def get_all_image_data(db: Session, id: str):

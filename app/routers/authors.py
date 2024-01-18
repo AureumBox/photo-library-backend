@@ -11,7 +11,7 @@ authors = APIRouter(prefix="/authors", tags=["authors"])
 
 
 @authors.get(
-    "/",
+    "",
     description="Get a list of all authors",
 )
 def get_authors(db: SessionLocal = Depends(get_db)):
@@ -41,7 +41,7 @@ def delete_author(id: str, db: SessionLocal = Depends(get_db)):
 
 
 @authors.post(
-    "/",
+    "",
     description="Create an author",
 )
 def create_author(author: schemas.AuthorCreate, db: SessionLocal = Depends(get_db)):

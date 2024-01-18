@@ -11,7 +11,7 @@ publications = APIRouter(prefix="/publications", tags=["publications"])
 
 
 @publications.get(
-    "/",
+    "",
     description="Get a list of all publications",
 )
 def get_publications(db: SessionLocal = Depends(get_db)):
@@ -41,7 +41,7 @@ def delete_publication(id: str, db: SessionLocal = Depends(get_db)):
 
 
 @publications.post(
-    "/",
+    "",
     description="Create a publication",
 )
 def create_publication(

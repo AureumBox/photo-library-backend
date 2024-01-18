@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, File, UploadFile, Form
+from fastapi import APIRouter, Depends, File, UploadFile, Form, HTTPException
 from uuid import UUID
 from typing import Optional
 from fastapi.responses import JSONResponse, FileResponse
@@ -19,7 +19,7 @@ images = APIRouter(prefix="/images", tags=["images"])
 
 
 @images.get(
-    "/",
+    "",
     description="Get a list of all images",
 )
 def get_images(db: SessionLocal = Depends(get_db)):
@@ -55,8 +55,12 @@ def get_images(tag: str, db: SessionLocal = Depends(get_db)):
 def get_image(id: str, db: SessionLocal = Depends(get_db)):
     try:
         image = service.get_all_image_data(db, id)
+        if not image:
+            raise HTTPException(status_code=404, detail="Image not found")
         return {"image": image}
     except Exception as e:
+        if isinstance(e, HTTPException):
+            raise e
         return JSONResponse(
             status_code=500,
             content={"error": str(e)},
@@ -65,8 +69,18 @@ def get_image(id: str, db: SessionLocal = Depends(get_db)):
 
 @images.get("/{id}/file", description="Get a image file by id")
 async def get_image_file(id: str, db: SessionLocal = Depends(get_db)):
-    image = service.get_image(db, id) 
-    return FileResponse(image.source)
+    try:
+        image = service.get_image(db, id)
+        if not image:
+            raise HTTPException(status_code=404, detail="Image not found")
+        return FileResponse(image.source)
+    except Exception as e:
+        if isinstance(e, HTTPException):
+            raise e
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e)},
+        )
 
 
 @images.post(
@@ -133,7 +147,7 @@ class TagEnum(str, Enum):
     stamps = "stamps"
 
 
-@images.post("/", description="Upload an image")
+@images.post("", description="Upload an image")
 async def create_image(
     id: UUID = Form(...),
     work_id: Optional[UUID] = Form(None),
