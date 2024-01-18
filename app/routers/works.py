@@ -25,6 +25,21 @@ def get_works(db: SessionLocal = Depends(get_db)):
         )
 
 
+@works.get(
+    "/{id}/publications",
+    description="Get a list of all publications from a work",
+)
+def get_publications_by_work(id: str, db: SessionLocal = Depends(get_db)):
+    try:
+        publications = service.get_publications_by_work(db, id)
+        return {"publications": publications}
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e)},
+        )
+
+
 @works.delete(
     "/{id}",
     description="Delete a work",
@@ -52,4 +67,4 @@ def create_work(work: schemas.WorkCreate, db: SessionLocal = Depends(get_db)):
         return JSONResponse(
             status_code=500,
             content={"error": str(e)},
-        )   
+        )
