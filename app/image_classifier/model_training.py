@@ -12,20 +12,9 @@ import tensorflow as tf
 # Filter out corrupted images
 num_skipped = 0
 for folder_name in (
-    "animals",
     "architecture",
-    "battles",
-    "bookcovers",
     "book_pages",
-    "foods",
     "landscapes",
-    "maps",
-    "paintings",
-    "people",
-    "plants",
-    "rivers",
-    "sculptures",
-    "stamps",
 ):
     folder_path = os.path.join("training_dataset", folder_name)
     for fname in os.listdir(folder_path):
@@ -45,8 +34,8 @@ print(f"Deleted {num_skipped} images.")
 
 # %%
 # Generate a Dataset
-image_size = (180, 180)
-batch_size = 20
+image_size = (224, 224)
+batch_size = 25
 
 train_ds = tf.keras.preprocessing.image_dataset_from_directory(
     "training_dataset",
@@ -100,22 +89,11 @@ train_ds = train_ds.prefetch(tf_data.AUTOTUNE)
 
 # %%
 # Modelo MobileNet
-num_classes = 14
+num_classes = 3
 class_names = [
-    "animals",
-    "architecture",
-    "battles",
-    "bookcovers",
-    "book_pages",
-    "foods",
     "landscapes",
-    "maps",
-    "paintings",
-    "people",
-    "plants",
-    "rivers",
-    "sculptures",
-    "stamps",
+    "architecture",
+    "book_pages",
 ]
 
 mobilenet_model = tf.keras.applications.MobileNetV2(
@@ -150,8 +128,19 @@ model = keras.models.load_model('models/classifier1.h5')
 
 # %%
 # Probar lmao
+class_names = [
+    "architecture",
+    "book_pages",
+    "landscapes",
+]
+
 img = tf.keras.preprocessing.image.load_img(
-    "C:\\Users\\aurim\Desktop\sitios-fantasticos-descubrir-bolivar-fc12c3d903a6a32f6a61daf37f8fa7cf.jpg",
+    "C:\\Users\\aurim\Desktop\\5942667287_7290d9f8a2_b.jpg",
+    target_size=image_size,
+)
+plt.imshow(img)
+img = tf.keras.preprocessing.image.load_img(
+    "C:\\Users\\aurim\Desktop\\5942667287_7290d9f8a2_b.jpg",
     target_size=image_size,
 )
 plt.imshow(img)
@@ -160,6 +149,7 @@ img_array = tf.keras.preprocessing.image.img_to_array(img)
 img_array = tf.expand_dims(img_array, 0)  # Create batch axis
 
 predictions = model.predict(img_array)
+print(predictions)
 predicted_class = np.argmax(predictions[0])  # Get the index of the highest score
 
 # Define your class names according to your categories
